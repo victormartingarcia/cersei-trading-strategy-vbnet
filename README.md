@@ -15,7 +15,7 @@ Table of Contents
 Overview
 ----
 
-Cersei is a trading algorithm written in C# using the [TradingMotion SDK] development tools (there is a [VB.net] port too).
+Cersei is a trading algorithm written in VB.Net using the [TradingMotion SDK] development tools (there is a [C# port] too).
 
 ![OHLC example chart](markdown_files/OHLC.png)
 <sub>__Image footnote:__ Example of Cersei OHLC financial chart showing some automatic trades</sub>
@@ -53,53 +53,54 @@ CerseiStrategy rules:
 
 Here is a simplified C# source code of Cersei's _OnNewBar()_ function. The complete code is all contained in [CerseiStrategy.cs] along with comments and definition of parameters.
 
-```csharp
-decimal stopMargin = (decimal)this.GetInputParameter("Trailing Stop Loss ticks distance") * this.GetMainChart().Symbol.TickSize;
+```VB.net
+Dim stopMargin As Decimal = Me.GetInputParameter("Trailing Stop Loss ticks distance") * Me.GetMainChart().Symbol.TickSize
 
-int buySignal = (int)this.GetInputParameter("ROCR 100 Buy signal trigger level");
+Dim buySignal As Integer = Me.GetInputParameter("ROCR 100 Buy signal trigger level")
 
-// ========== ENTRY ==========
-if (rocr100Indicator.GetROCR100()[1] <= buySignal && rocr100Indicator.GetROCR100()[0] > buySignal && this.GetOpenPosition() == 0)
-{
-    // BUY SIGNAL: Entering long and placing a trailing stop loss
-    MarketOrder buyOrder = new MarketOrder(OrderSide.Buy, 1, "Enter long position");
-    trailingStopOrder = new StopOrder(OrderSide.Sell, 1, this.Bars.Close[0] - stopMargin, "Trailing stop long exit");
+If rocr100Indicator.GetROCR100()(1) <= buySignal And rocr100Indicator.GetROCR100()(0) > buySignal And Me.GetOpenPosition() = 0 Then
 
-    this.InsertOrder(buyOrder);
-    this.InsertOrder(trailingStopOrder);
+    ' BUY SIGNAL: Entering long and placing a trailing stop loss
+    Dim buyOrder As MarketOrder = New MarketOrder(OrderSide.Buy, 1, "Enter long position")
+    trailingStopOrder = New StopOrder(OrderSide.Sell, 1, Me.Bars.Close(0) - stopMargin, "Trailing stop long exit")
 
-    // Resetting acceleration and highest close
-    acceleration = 0.02m;
-    highestClose = Bars.Close[0];
-}
-// ========== EXIT ==========
-else if (this.GetOpenPosition() == 1)
-{
-    // Checking if the price has moved in our favour
-    if (this.Bars.Close[0] > highestClose)
-    {
-        highestClose = this.Bars.Close[0];
+    Me.InsertOrder(buyOrder)
+    Me.InsertOrder(trailingStopOrder)
 
-        // Increasing acceleration
-        acceleration = acceleration * (highestClose - trailingStopOrder.Price);
+    ' Resetting acceleration and highest close
+    acceleration = 0.02D
+    highestClose = Me.Bars.Close(0)
 
-        // Checking if trailing the stop order would exceed the current market price
-        if (trailingStopOrder.Price + acceleration < this.Bars.Close[0])
-        {
-            // Setting the new price for the trailing stop
-            trailingStopOrder.Price = trailingStopOrder.Price + acceleration;
-            this.ModifyOrder(trailingStopOrder);
-        }
-        else
-        {
-            // Cancelling the order and closing the position
-            MarketOrder exitLongOrder = new MarketOrder(OrderSide.Sell, 1, "Exit long position");
+ElseIf Me.GetOpenPosition() = 1 Then
 
-            this.InsertOrder(exitLongOrder);
-            this.CancelOrder(trailingStopOrder);
-        }
-    }
-}
+    ' Checking if the price has moved in our favour
+    If Me.Bars.Close(0) > highestClose Then
+
+        highestClose = Me.Bars.Close(0)
+
+        ' Increasing acceleration
+        acceleration = acceleration * (highestClose - trailingStopOrder.Price)
+
+        ' Checking if trailing the stop order would exceed the current market price
+        If trailingStopOrder.Price + acceleration < Me.Bars.Close(0) Then
+
+            ' Setting the new price for the trailing stop
+            trailingStopOrder.Price = trailingStopOrder.Price + acceleration
+            Me.ModifyOrder(trailingStopOrder)
+
+        Else
+
+            ' Cancelling the order and closing the position
+            Dim exitLongOrder As MarketOrder = New MarketOrder(OrderSide.Sell, 1, "Exit long position")
+
+            Me.InsertOrder(exitLongOrder)
+            Me.CancelOrder(trailingStopOrder)
+
+        End If
+
+    End If
+
+End If
 ```
 
 Download
@@ -150,7 +151,7 @@ Disclaimer
 
 I am R&D engineer at [TradingMotion LLC], and head of [TradingMotion SDK] platform. Beware, the info here can be a little biased ;)
 
-  [VB.net port]: https://github.com/victormartingarcia/Cersei-trading-strategy-vbnet
+  [C# port]: https://github.com/victormartingarcia/Cersei-trading-strategy-csharp
   [TradingMotion SDK]: http://sdk.tradingmotion.com
   [CerseiStrategy.cs]: CerseiStrategy/CerseiStrategy.cs
   [iSystems platform]: https://www.isystems.com
