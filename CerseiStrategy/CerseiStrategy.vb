@@ -1,10 +1,10 @@
-﻿Imports System
+Imports System
 Imports System.Collections.Generic
-Imports TradingMotion.SDK.Algorithms
-Imports TradingMotion.SDK.Algorithms.InputParameters
-Imports TradingMotion.SDK.Markets.Charts
-Imports TradingMotion.SDK.Markets.Orders
-Imports TradingMotion.SDK.Markets.Indicators.Momentum
+Imports TradingMotion.SDKv2.Algorithms
+Imports TradingMotion.SDKv2.Algorithms.InputParameters
+Imports TradingMotion.SDKv2.Markets.Charts
+Imports TradingMotion.SDKv2.Markets.Orders
+Imports TradingMotion.SDKv2.Markets.Indicators.Momentum
 
 Namespace CerseiStrategy
 
@@ -20,8 +20,8 @@ Namespace CerseiStrategy
         Dim rocr100Indicator As ROCR100Indicator
         Dim trailingStopOrder As Order
 
-        Dim acceleration As Decimal
-        Dim highestClose As Decimal
+        Dim acceleration As Double
+        Dim highestClose As Double
         
         Public Sub New(ByVal mainChart As Chart, ByVal secondaryCharts As List(Of Chart))
             MyBase.New(mainChart, secondaryCharts)
@@ -76,7 +76,7 @@ Namespace CerseiStrategy
             parameters.Add(New InputParameter("ROCR 100 Period", 48))
 
             ' The distance between the entry and the initial stop loss order
-            parameters.Add(New InputParameter("Trailing Stop Loss ticks distance", 85D))
+            parameters.Add(New InputParameter("Trailing Stop Loss ticks distance", 85.0))
 
             ' Break level of ROCR 100 indicator we consider a buy signal
             parameters.Add(New InputParameter("ROCR 100 Buy signal trigger level", 103))
@@ -98,10 +98,10 @@ Namespace CerseiStrategy
             Me.AddIndicator("ROCR 100 indicator", rocr100Indicator)
 
             ' Setting the initial acceleration for the trailing stop
-            acceleration = 0.02D
+            acceleration = 0.02
 
             ' Setting the initial highest close
-            highestClose = 0D
+            highestClose = 0.0
 
         End Sub
 
@@ -110,7 +110,7 @@ Namespace CerseiStrategy
         ''' </summary>
         Public Overrides Sub OnNewBar()
 
-            Dim stopMargin As Decimal = Me.GetInputParameter("Trailing Stop Loss ticks distance") * Me.GetMainChart().Symbol.TickSize
+            Dim stopMargin As Double = Me.GetInputParameter("Trailing Stop Loss ticks distance") * Me.GetMainChart().Symbol.TickSize
 
             Dim buySignal As Integer = Me.GetInputParameter("ROCR 100 Buy signal trigger level")
 
@@ -124,7 +124,7 @@ Namespace CerseiStrategy
                 Me.InsertOrder(trailingStopOrder)
 
                 ' Resetting acceleration and highest close
-                acceleration = 0.02D
+                acceleration = 0.02
                 highestClose = Me.Bars.Close(0)
 
             ElseIf Me.GetOpenPosition() = 1 Then

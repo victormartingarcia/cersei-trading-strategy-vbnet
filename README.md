@@ -54,7 +54,7 @@ CerseiStrategy rules:
 Here is a simplified C# source code of Cersei's _OnNewBar()_ function. The complete code is all contained in [CerseiStrategy.cs] along with comments and definition of parameters.
 
 ```VB.net
-Dim stopMargin As Decimal = Me.GetInputParameter("Trailing Stop Loss ticks distance") * Me.GetMainChart().Symbol.TickSize
+Dim stopMargin As Double = Me.GetInputParameter("Trailing Stop Loss ticks distance") * Me.GetMainChart().Symbol.TickSize
 
 Dim buySignal As Integer = Me.GetInputParameter("ROCR 100 Buy signal trigger level")
 
